@@ -1,0 +1,13 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27070/docker-db
+
+user: admin
+pass: admin
+
+logging:
+  level:
+    root: DEBUG
+
+JWT_TOKEN_PIX_APPLICATION_PAYMENT: SEU_TOKEN_AQUI
