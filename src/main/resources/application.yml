@@ -1,20 +1,8 @@
 spring:
-  config:
-    import: aws-secretsmanager:production/rds/postgres-v3
-  cloud:
-    aws:
-      region:
-        static: ${AWS_REGION:us-east-1}
-      credentials:
-        access-key: ${AWS_ACCESS_KEY:kakaka}
-        secret-key: ${AWS_SECRET_KEY:kikiki}
+  profiles:
+    active: ${ENVIRONMENT_PROFILE_VALUE:prd}
   application:
-    name: api-food
-  datasource:
-    url: jdbc:postgresql://${db_host}:5432/food_oders_db
-    username: ${db_username}
-    password: ${db_password}
-    driver-class-name: org.postgresql.Driver
+    name: api-food-orders
   jpa:
     hibernate:
       ddl-auto: update
@@ -22,9 +10,6 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-  profiles:
-    active: ${ENVIRONMENT_PROFILE_VALUE:local}
-
 springdoc:
   api-docs:
     enabled: true
