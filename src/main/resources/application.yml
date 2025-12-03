@@ -1,10 +1,19 @@
 spring:
+  config:
+    import: aws-secretsmanager:production/rds/postgres-v3
+  cloud:
+    aws:
+      region:
+        static: ${AWS_REGION:us-east-1}
+      credentials:
+        access-key: ${AWS_ACCESS_KEY:kakaka}
+        secret-key: ${AWS_SECRET_KEY:kikiki}
   application:
     name: api-food
   datasource:
-    url: jdbc:postgresql://localhost:5432/fooddb
-    username: your_postgres_user
-    password: your_postgres_password
+    url: jdbc:postgresql://${db_host}:5432/food_oders_db
+    username: ${db_username}
+    password: ${db_password}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
