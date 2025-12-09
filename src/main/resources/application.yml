@@ -1,11 +1,8 @@
 spring:
+  profiles:
+    active: ${ENVIRONMENT_PROFILE_VALUE:prd}
   application:
-    name: api-food
-  datasource:
-    url: jdbc:postgresql://localhost:5432/fooddb
-    username: your_postgres_user
-    password: your_postgres_password
-    driver-class-name: org.postgresql.Driver
+    name: api-food-orders
   jpa:
     hibernate:
       ddl-auto: update
@@ -13,9 +10,6 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-  profiles:
-    active: ${ENVIRONMENT_PROFILE_VALUE:local}
-
 springdoc:
   api-docs:
     enabled: true
