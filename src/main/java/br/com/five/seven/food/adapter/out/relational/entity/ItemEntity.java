@@ -6,6 +6,9 @@ public class ItemEntity {
     private Integer quantity;
     private ComboEntity combo;
 
+    public ItemEntity() {
+    }
+
     public ItemEntity(Long id, ProductEntity product, Integer quantity, ComboEntity combo) {
         this.id = id;
         this.product = product;

@@ -6,7 +6,11 @@ spring:
   application:
     name: api-food
   datasource:
-    url: jdbc:postgresql://localhost:5432/food_oders_db
+    url: jdbc:postgresql://localhost:5432/food_orders_db
     username: postgres
     password: admin
     driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true

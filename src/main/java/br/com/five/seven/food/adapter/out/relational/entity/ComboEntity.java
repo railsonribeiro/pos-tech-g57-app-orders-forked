@@ -9,6 +9,8 @@ public class ComboEntity {
     private List<ItemEntity> drink;
     private List<ItemEntity> dessert;
 
+    public ComboEntity() {}
+
     public ComboEntity(Long id, List<ItemEntity> snack, List<ItemEntity> garnish, List<ItemEntity> drink, List<ItemEntity> dessert) {
         this.id = id;
         this.snack = snack;
