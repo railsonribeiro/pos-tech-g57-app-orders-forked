@@ -23,7 +23,7 @@ public class ConfigBeans {
     }
 
     @Bean
-    public OrderService orderServiceIn(IOrderRepositoryOut IOrderRepositoryOut, IProductRepositoryOut productRepository) {
-        return new OrderService(IOrderRepositoryOut, productRepository);
+    public OrderService orderServiceIn(IOrderRepositoryOut orderRepositoryOut, IProductRepositoryOut productRepository, CategoryService categoryService) {
+        return new OrderService(orderRepositoryOut, productRepository, categoryService);
     }
 }

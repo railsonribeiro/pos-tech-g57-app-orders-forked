@@ -1,22 +1,19 @@
 package br.com.five.seven.food.adapter.out.relational.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ComboEntity {
     private Long id;
-    private List<ItemEntity> snack;
-    private List<ItemEntity> garnish;
-    private List<ItemEntity> drink;
-    private List<ItemEntity> dessert;
+    private List<ItemEntity> items;
 
-    public ComboEntity() {}
+    public ComboEntity() {
+        this.items = new ArrayList<>();
+    }
 
-    public ComboEntity(Long id, List<ItemEntity> snack, List<ItemEntity> garnish, List<ItemEntity> drink, List<ItemEntity> dessert) {
+    public ComboEntity(Long id, List<ItemEntity> items) {
         this.id = id;
-        this.snack = snack;
-        this.garnish = garnish;
-        this.drink = drink;
-        this.dessert = dessert;
+        this.items = items != null ? items : new ArrayList<>();
     }
 
     public Long getId() {
@@ -27,36 +24,12 @@ public class ComboEntity {
         this.id = id;
     }
 
-    public List<ItemEntity> getSnack() {
-        return snack;
+    public List<ItemEntity> getItems() {
+        return items;
     }
 
-    public void setSnack(List<ItemEntity> snack) {
-        this.snack = snack;
-    }
-
-    public List<ItemEntity> getGarnish() {
-        return garnish;
-    }
-
-    public void setGarnish(List<ItemEntity> garnish) {
-        this.garnish = garnish;
-    }
-
-    public List<ItemEntity> getDrink() {
-        return drink;
-    }
-
-    public void setDrink(List<ItemEntity> drink) {
-        this.drink = drink;
-    }
-
-    public List<ItemEntity> getDessert() {
-        return dessert;
-    }
-
-    public void setDessert(List<ItemEntity> dessert) {
-        this.dessert = dessert;
+    public void setItems(List<ItemEntity> items) {
+        this.items = items != null ? items : new ArrayList<>();
     }
 }
 

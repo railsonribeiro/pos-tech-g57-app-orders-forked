@@ -26,7 +26,7 @@ public class ItemMapperImpl implements ItemMapper {
     @Override
     public ItemEntity domainToEntity(Item item) {
         return new ItemEntity(
-                1L,
+                item.getId(),
                 productMapper.fromDomain(item.getProduct()),
                 item.getQuantity(),
                 null

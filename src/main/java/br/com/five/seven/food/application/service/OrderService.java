@@ -5,6 +5,7 @@ import br.com.five.seven.food.application.domain.Item;
 import br.com.five.seven.food.application.domain.Order;
 import br.com.five.seven.food.application.domain.Product;
 import br.com.five.seven.food.application.domain.enums.OrderStatus;
+import br.com.five.seven.food.application.ports.in.CategoryServiceIn;
 import br.com.five.seven.food.application.ports.in.OrderServiceIn;
 import br.com.five.seven.food.application.ports.out.IOrderRepositoryOut;
 import br.com.five.seven.food.application.ports.out.IProductRepositoryOut;
@@ -19,12 +20,13 @@ import java.util.List;
 public class OrderService implements OrderServiceIn {
 
     private final IOrderRepositoryOut orderRepository;
-
     private final IProductRepositoryOut productRepository;
+    private final CategoryServiceIn categoryService;
 
-    public OrderService(IOrderRepositoryOut orderRepository, IProductRepositoryOut productRepository) {
+    public OrderService(IOrderRepositoryOut orderRepository, IProductRepositoryOut productRepository, CategoryServiceIn categoryService) {
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
+        this.categoryService = categoryService;
     }
 
     public Page<Order> findAll(Pageable pageable) {
@@ -130,19 +132,13 @@ public class OrderService implements OrderServiceIn {
         }
 
         Combo combo = order.getCombo();
-        List<Item> snack = combo.getSnack();
-        List<Item> garnish = combo.getGarnish();
-        List<Item> drink = combo.getDrink();
-        List<Item> dessert = combo.getDessert();
+        List<Item> items = combo.getItems();
 
-        validateAndSetProducts(snack, isSearch);
-        validateAndSetProducts(garnish, isSearch);
-        validateAndSetProducts(drink, isSearch);
-        validateAndSetProducts(dessert, isSearch);
-
-        if (snack.isEmpty() && garnish.isEmpty() && drink.isEmpty() && dessert.isEmpty()) {
-            throw new RuntimeException("Order cannot be empty.");
+        if (items == null || items.isEmpty()) {
+            throw new ValidationException("Order combo cannot be empty.");
         }
+
+        validateAndSetProducts(items, isSearch);
 
         order.setTotalAmount(combo.getTotalPrice());
         order.setRemainingTime(calculateTime(order.getReceivedAt(), order.getOrderStatus()));
@@ -150,20 +146,39 @@ public class OrderService implements OrderServiceIn {
         return order;
     }
 
-    private void validateAndSetProducts(List<Item> items, boolean isSearch) {
-        items.forEach(item -> {
+    private void validateAndSetProducts(List<Item> items, boolean isSearch) throws ValidationException {
+        for (Item item : items) {
             if (!isSearch && item.getQuantity() < 1) {
-                throw new RuntimeException("The combo must have at least one product with quantity 1.");
+                throw new ValidationException("Each item must have at least quantity 1.");
             }
 
             Product product = productRepository.getById(item.getProduct().getId());
 
+            if (product == null) {
+                throw new ValidationException("Product with ID " + item.getProduct().getId() + " not found.");
+            }
+
             if (!isSearch && !product.isActive()) {
-                throw new RuntimeException("One or more products in the combo are not available.");
+                throw new ValidationException("Product '" + product.getName() + "' is not available.");
+            }
+
+            // Validate product category
+            if (product.getCategory() == null) {
+                throw new ValidationException("Product '" + product.getName() + "' does not have a category assigned.");
+            }
+
+            // Ensure category exists and is active
+            var category = categoryService.getCategoryById(product.getCategory().getId());
+            if (category == null) {
+                throw new ValidationException("Category for product '" + product.getName() + "' not found.");
+            }
+
+            if (!isSearch && !category.isActive()) {
+                throw new ValidationException("Category '" + category.getName() + "' is not active.");
             }
 
             item.setProduct(product);
-        });
+        }
     }
 
     public static String calculateTime(LocalDateTime initial, OrderStatus orderStatus) {

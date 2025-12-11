@@ -13,8 +13,5 @@ import java.util.List;
 @AllArgsConstructor
 public class ComboResponse {
     private Long id;
-    private List<ItemResponse> snack = new ArrayList<>();
-    private List<ItemResponse> garnish = new ArrayList<>();
-    private List<ItemResponse> drink = new ArrayList<>();
-    private List<ItemResponse> dessert = new ArrayList<>();
+    private List<ItemResponse> items = new ArrayList<>();
 }

@@ -1,6 +1,8 @@
 package br.com.five.seven.food.adapter.in.payload.combo;
 
 import br.com.five.seven.food.adapter.in.payload.combo.item.ItemRequest;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Null;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,8 +17,8 @@ import java.util.List;
 public class ComboRequest {
     @Null
     private String id;
-    private List<ItemRequest> snack = new ArrayList<>();
-    private List<ItemRequest> garnish = new ArrayList<>();
-    private List<ItemRequest> drink = new ArrayList<>();
-    private List<ItemRequest> dessert = new ArrayList<>();
+
+    @NotEmpty(message = "Combo must have at least one item")
+    @Valid
+    private List<ItemRequest> items = new ArrayList<>();
 }
