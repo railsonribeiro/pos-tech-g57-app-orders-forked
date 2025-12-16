@@ -36,11 +36,12 @@ public class OrderService implements OrderServiceIn {
         return orderRepository.findAllByOrderStatus(orderStatus, pageable);
     }
 
-    public Order findById(Long id) throws ValidationException {
+    public Order findById(Long id) {
         return orderRepository.findById(id);
     }
 
     public Order create(Order order) throws ValidationException {
+        validateAndPopulateOrder(order);
         return orderRepository.save(order);
     }
 
@@ -59,7 +60,7 @@ public class OrderService implements OrderServiceIn {
         return orderRepository.save(order);
     }
 
-    public Order updateStatusOrder(Long orderId, OrderStatus orderStatus) throws ValidationException {
+    public Order updateStatusOrder(Long orderId, OrderStatus orderStatus) {
         Order order = findById(orderId);
         order.setOrderStatus(orderStatus);
 
@@ -72,8 +73,7 @@ public class OrderService implements OrderServiceIn {
         return save(order);
     }
 
-    public Order advanceOrderStatus(Long orderId) throws ValidationException {
-
+    public Order advanceOrderStatus(Long orderId) {
         Order order = findById(orderId);
         OrderStatus current = order.getOrderStatus();
 
@@ -101,66 +101,61 @@ public class OrderService implements OrderServiceIn {
     @Override
     public Order updateOrderItems(Long id, Order order) throws ValidationException {
         Order orderToBeUpdated = findById(id);
-//        validateAndPopulateOrder(order, false);
+        validateAndPopulateOrder(order);
         orderToBeUpdated.setItems(order.getItems());
         orderToBeUpdated.setTotalAmount(orderToBeUpdated.calculateTotalAmount());
         orderToBeUpdated.setUpdatedAt(LocalDateTime.now());
         return orderRepository.update(orderToBeUpdated);
     }
-//
-//    private Order validateAndPopulateOrder(Order order, boolean isSearch) throws ValidationException {
-//        if (order.getCpfClient() != null) {
-//            //TODO search client cpf validation
-//        }
-//
-//        List<Item> items = order.getItems();
-//
-//        if (items == null || items.isEmpty()) {
-//            throw new ValidationException("Order must have at least one item.");
-//        }
-//
-//        validateAndSetProducts(items, isSearch);
-//
-//        order.setTotalAmount(order.calculateTotalAmount());
-//        order.setRemainingTime(calculateTime(order.getReceivedAt(), order.getOrderStatus()));
-//
-//        return order;
-//    }
-//
-//    private void validateAndSetProducts(List<Item> items, boolean isSearch) throws ValidationException {
-//        for (Item item : items) {
-//            if (!isSearch && item.getQuantity() < 1) {
-//                throw new ValidationException("Each item must have at least quantity 1.");
-//            }
-//
-//            Product product = productRepository.getById(item.getProduct().getId());
-//
-//            if (product == null) {
-//                throw new ValidationException("Product with ID " + item.getProduct().getId() + " not found.");
-//            }
-//
-//            if (!isSearch && !product.isActive()) {
-//                throw new ValidationException("Product '" + product.getName() + "' is not available.");
-//            }
-//
-//            // Validate product category
-//            if (product.getCategory() == null) {
-//                throw new ValidationException("Product '" + product.getName() + "' does not have a category assigned.");
-//            }
-//
-//            // Ensure category exists and is active
-//            var category = categoryService.getCategoryById(product.getCategory().getId());
-//            if (category == null) {
-//                throw new ValidationException("Category for product '" + product.getName() + "' not found.");
-//            }
-//
-//            if (!isSearch && !category.isActive()) {
-//                throw new ValidationException("Category '" + category.getName() + "' is not active.");
-//            }
-//
-//            item.setProduct(product);
-//        }
-//    }
+
+    private void validateAndPopulateOrder(Order order) throws ValidationException {
+        //TODO search client cpf validation
+        List<Item> items = order.getItems();
+
+        if (items == null || items.isEmpty()) {
+            throw new ValidationException("Order must have at least one item.");
+        }
+
+        validateAndSetProducts(items);
+
+        order.setTotalAmount(order.calculateTotalAmount());
+        order.setRemainingTime(calculateTime(order.getReceivedAt(), order.getOrderStatus()));
+    }
+
+    private void validateAndSetProducts(List<Item> items) throws ValidationException {
+        for (Item item : items) {
+            if (item.getQuantity() < 1) {
+                throw new ValidationException("Each item must have at least quantity 1.");
+            }
+
+            Product product = productRepository.getById(item.getProduct().getId());
+
+            if (product == null) {
+                throw new ValidationException("Product with ID " + item.getProduct().getId() + " not found.");
+            }
+
+            if (!product.isActive()) {
+                throw new ValidationException("Product '" + product.getName() + "' is not available.");
+            }
+
+            // Validate product category
+            if (product.getCategory() == null) {
+                throw new ValidationException("Product '" + product.getName() + "' does not have a category assigned.");
+            }
+
+            // Ensure category exists and is active
+            var category = categoryService.getCategoryById(product.getCategory().getId());
+            if (category == null) {
+                throw new ValidationException("Category for product '" + product.getName() + "' not found.");
+            }
+
+            if (!category.isActive()) {
+                throw new ValidationException("Category '" + category.getName() + "' is not active.");
+            }
+
+            item.setProduct(product);
+        }
+    }
 
     public static String calculateTime(LocalDateTime initial, OrderStatus orderStatus) {
 
