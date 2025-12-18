@@ -32,7 +32,8 @@ Visite o [documeto](documentations/PROBLEM.md) anexo para mais detalhes sobre o 
 - **Linguagem**: ☕ Java 21
 - **Framework**: 🌱 Spring Boot 3.4.4
 - **Maven**: 🛠️ Maven 3.9.6
-- **Banco de Dados**: 🍃 MongoDB
+- **Banco de Dados**: 🐘 PostgreSQL (produção) / H2 (local)
+- **ORM**: 🔄 JPA/Hibernate
 - **Containerização**: 🐳 Docker + 🛠️ Docker Compose 3.8
 - **Documentação API**: 📄 Swagger/OpenAPI 3.0
 
