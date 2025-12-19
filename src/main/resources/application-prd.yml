@@ -22,5 +22,5 @@ springdoc:
 
 api:
   client:
-    url: ${CLIENT_API_URL:http://api-client-service:8080}
+    url: ${CLIENT_API_URL:http://api-client-service}
 
