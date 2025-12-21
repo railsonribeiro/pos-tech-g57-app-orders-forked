@@ -1,11 +1,8 @@
 name: CD
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'k8s/**'
+  repository_dispatch:
+    types: [deploy]
   workflow_dispatch: {}
 
 env:
