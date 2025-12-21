@@ -15,33 +15,4 @@ jobs:
       dockerhub_username: "postechf57"
     secrets: inherit
 
-  update-deployment-tag:
-    needs: call-reusable-build-and-test-workflow
-    if: ${{ github.ref == 'refs/heads/main' && needs.call-reusable-build-and-test-workflow.outputs.new_image_pushed == 'true' }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Update deployment image tag
-        run: |
-          IMAGE_TAG="${{ needs.call-reusable-build-and-test-workflow.outputs.image_tag }}"
-          echo "🏷️ Atualizando tag da imagem para: $IMAGE_TAG"
-          sed -i "s|image: postechf57/pos-tech-g57-app-orders:.*|image: postechf57/pos-tech-g57-app-orders:$IMAGE_TAG|" k8s/prd/deployment.yaml
-          cat k8s/prd/deployment.yaml | grep image:
-
-      - name: Commit and push
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add k8s/prd/deployment.yaml
-          git diff --staged --quiet || git commit -m "release: ${{ needs.call-reusable-build-and-test-workflow.outputs.image_tag }} [skip ci]"
-          git push
-
-  call-cd:
-    needs: [call-reusable-build-and-test-workflow, update-deployment-tag]
-    if: ${{ github.ref == 'refs/heads/main' && needs.call-reusable-build-and-test-workflow.outputs.new_image_pushed == 'true' }}
-    uses: ./.github/workflows/cd.yaml
-    secrets: inherit
+ 
