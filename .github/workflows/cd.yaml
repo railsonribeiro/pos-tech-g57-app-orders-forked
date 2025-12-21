@@ -3,6 +3,11 @@ name: CD
 on:
   repository_dispatch:
     types: [deploy]
+  push:
+    branches:
+      - main
+    paths:
+      - 'k8s/**'
   workflow_dispatch: {}
 
 env:
