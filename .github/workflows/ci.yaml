@@ -13,6 +13,7 @@ jobs:
     with:
       app_name: "pos-tech-g57-app-orders"
       dockerhub_username: "postechf57"
+      run_update_deployment: true
     secrets: inherit
 
  
